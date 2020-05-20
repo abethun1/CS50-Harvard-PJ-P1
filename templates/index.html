@@ -1,44 +1,24 @@
-{% extends "base-layout.html"%}
+{% from 'form_helper.html' import displayField %}
+{% extends "base-layout.html" %}
 
-{% block title%} Registration {% endblock %}
+{% block title %} Registration {% endblock %}
 
-{% block content%}
+{% block content %}
 	<h1> Start New </h1>
 
-	<form action="{{ url_for('index')}}", method="POST">
-		<div>
-			{{ form.username(class_='form-control',
-			placeholder='Username', autocomplete='off',
+	<form action="{{ url_for('index') }}", method="POST">
+		{{ displayField(form.username, 'Username', autocomplete='off',
 			autofocus=true)}}
-			<ul>
-				{% for error in form.username.errors %}
-					<li> {{ error }}</li>
-				{% endfor %}
-			</ul>
-		</div>
+		
+		{{ displayField(form.password, 'Password')}}
+		
+		{{ displayField(form.confirmation_password, 'Confirm Password')}}
+
 		<div>
-			{{ form.password(class_='form-control',
-			placeholder='Password', autocomplete='off',
-			autofocus=true)}}
-			<ul>
-				{% for error in form.password.errors %}
-					<li> {{ error }}</li>
-				{% endfor %}
-			</ul>
+			{{ form.submit_button }}
 		</div>
-		<div>
-			{{ form.confirmation_password(class_='form-control',
-			placeholder='Confirm Password', autocomplete='off',
-			autofocus=true)}}
-			<ul>
-				{% for error in form.confirmation_password.errors %}
-					<li> {{ error }}</li>
-				{% endfor %}
-			</ul>
-		</div>
-		<div>
-			{{ form.submit_button}}
-		</div>
-		{{ form.csrf_token}}
+
+		{{ form.csrf_token }}
+
 	</form>
-{% endblock%}
+{% endblock %}
