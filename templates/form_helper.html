@@ -1,5 +1,5 @@
 {% macro displayField(fieldName, placeholderValue) %}
-	<div>
+	<div class="input-group input-group-lg" style="padding-bottom: 30px; width: 400px; margin: auto;">
 		{{ fieldName(class_='form-control',
 			placeholder=placeholderValue, **kwargs) }}
 		<ul>
