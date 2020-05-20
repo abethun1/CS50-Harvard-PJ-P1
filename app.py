@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = 'complicated_key'
 
 #Configure database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://sxygwgsgwsshyu:abe58905c1f152b54874ca679b5cb00eb2ca9fa198ef0e659e7afd87a083ff54@ec2-34-200-72-77.compute-1.amazonaws.com:5432/dd5itlspee4qcv'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://nzgmhxdlwwdcec:efb4d0febc3f1a2838ecf81355174183828b4281cd91c6239f4ffc79d54d4dda@ec2-52-71-231-180.compute-1.amazonaws.com:5432/d70tk20n2eq526'
 db = SQLAlchemy(app)
 
 #Utilize flask login
@@ -24,6 +24,8 @@ def load_user(id):
 #Signup route
 @app.route("/", methods=['GET', 'POST'])
 def index():
+	if current_user.is_authenticated:
+		return "You must log out to sign up"
 
 	reg_form = RegistrationForm()
 
@@ -45,7 +47,9 @@ def index():
 #Login route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-	
+	if current_user.is_authenticated:
+		return "You must log out to login up"
+
 	login_form = LoginForm()
 
 	#Allow user to login if validation success
@@ -62,7 +66,7 @@ def home():
 
 	if not current_user.is_authenticated:
 		return "You must login to have access to this page"	
-	return "This is your home page"
+	return "This is your home page " + current_user.username
 
 @app.route("/logout", methods=['GET'])
 def logout():
