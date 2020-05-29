@@ -1,0 +1,15 @@
+{% extends "base-layout.html" %}
+
+{% block title %} Books {% endblock %}
+
+{% block content %}
+	
+	{% for books in books %}
+			<div style="float: left; padding: 30px">
+				<h1>ISBN : {{ books.isbn }}  </h1>
+				<h1> Title : <a href=" {{ url_for('bookTitle', title = books.title) }} "> {{ books.title}}</a></h1>
+				<h2 style="padding-left: 30px"> by {{ books.author }}</h2>	
+			</div>
+	{% endfor %}
+
+{% endblock %}

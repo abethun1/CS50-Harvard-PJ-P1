@@ -1,0 +1,35 @@
+{% extends "base-layout.html" %}
+
+{% block title %} Books {% endblock %}
+
+{% block content %}
+	
+	
+			<div style="float: center; padding: 30px">
+				<h1 style="text-align: center; padding: 20px; color: green;">ISBN : {{ books.isbn }}  </h1>
+				<h1 style="text-align: center; padding: 20px; color: green;"> Title :  {{ books.title }}  </h1>
+				<h1 style="text-align: center; padding: 20px; color: green;"> by {{ books.author }}</h2>	
+			</div>
+	
+
+	<form action="{{ url_for('bookTitle', title = books.title) }}", id="form_review" method="POST">
+		<h1 style="text-align: center; padding-bottom: 10px; color: green; font-size: 18px;">Name: {{ username}} </h1>
+	  	<div class="input-group input-group-lg" style="width: 100px; margin: auto;">
+	  		{{ form.comment }}
+	  	</div>
+	  	<div class="input-group input-group-lg" style="width: 100px; margin: auto;">
+	  		Choose a rating {{ form.rating}}
+		</div>
+		<div class="input-group input-group-lg" style="width: 100px; margin: auto; padding-left: 20px">
+			<button type="submit" class="btn btn-primary" form="form_review" value="Submit">Submit</button>
+		</div>
+		{{ form.csrf_token }}  
+	</form>
+	<br>
+
+
+
+
+
+
+{% endblock %}

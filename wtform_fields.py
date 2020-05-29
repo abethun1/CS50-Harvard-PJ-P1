@@ -1,8 +1,8 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from flask_wtf import FlaskForm, Form
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField, RadioField
 from wtforms.validators import InputRequired, Length, EqualTo, ValidationError
 from passlib.hash import pbkdf2_sha256
-from models import Users
+from models import Users, Books, Reviews
 
 
 def invalid_credentials(form, field):
@@ -37,9 +37,22 @@ class RegistrationForm(FlaskForm):
 			raise ValidationError("Username already exist")
 
 class LoginForm(FlaskForm):
-	#Registration form
+	#Login form
 
 	username = StringField('username_label', validators=[InputRequired(message="Username reuired")])
 	password = PasswordField('password_label', validators=[InputRequired(message="Password reuired"),
 		invalid_credentials])
 	submit_button = SubmitField('Login')
+
+class ReviewForm(Form):
+	#Comment form
+	comment = TextAreaField('comment_label', validators=[InputRequired(message="Something must be written here"),
+		Length(min=1, max=150, message="Comment must be between 10 - 150 characters long")])
+	rating = RadioField('Label', choices=[('1','1 *'),('2','2 *'),('3','3 *'),('4','4 *')])
+	submit_button = SubmitField('SubmitField')
+
+class SearchForm(Form):
+	"""SearchForm"""
+	search = StringField('search_label', validators=[InputRequired("Must type in something"),
+		Length(min=2, message="This field requires a min of 5 charcaters to search")])
+	submit_button = SubmitField('Search')
