@@ -4,7 +4,9 @@
 {% block title %} Registration {% endblock %}
 
 {% block content %}
-	<h1 style="text-align: center; padding: 50px"> Login </h1>
+	
+	<h1 style="text-align: center; padding: 10px; color: blue; font-size: 20px"> {{ message }} </h1>
+	<h1 style="text-align: center; padding: 20px"> Login </h1>
 
 	<form action="{{ url_for('login') }}", id="form_login" method="POST">
 		{{ displayField(form.username, 'Username', autocomplete='off',

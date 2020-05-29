@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 import flask
@@ -16,10 +17,8 @@ from models import *
 app = Flask(__name__)
 app.secret_key = 'complicated_key'
 
-#res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "VZiRw90zkVi3Ipbnxg2xA", "isbns": "0446679097"})
-
 #Configure database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://nzgmhxdlwwdcec:efb4d0febc3f1a2838ecf81355174183828b4281cd91c6239f4ffc79d54d4dda@ec2-52-71-231-180.compute-1.amazonaws.com:5432/d70tk20n2eq526'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'This is where your database goes' 
 db = SQLAlchemy(app)
 Bootstrap(app)
 
@@ -94,20 +93,21 @@ def signup():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
 	search_form = SearchForm()
+	login_form = LoginForm()
+	message = ""
 
 	if current_user.is_authenticated:
-		return "You must log out to login up"
+		message = "Please Login To Continue"
+		return render_template("login.html", form=login_form, search_form = search_form, message=message)
 
-	login_form = LoginForm()
-
-
+	
 	#Allow user to login if validation success
 	if login_form.validate_on_submit():
 		user_object = Users.query.filter_by(username=login_form.username.data).first()
 		login_user(user_object)
 		return redirect(url_for('home'))
 
-	return render_template("login.html", form=login_form, search_form = search_form)
+	return render_template("login.html", form=login_form, search_form = search_form, message=message)
 
 
 
@@ -119,18 +119,23 @@ def login():
 @app.route("/home", methods=['GET', 'POST'])
 def home():
 	search_form = SearchForm()
+	login_form = LoginForm()
 
 	if not current_user.is_authenticated:
-		return "You must login to have access to this page"	
+		message = "Please Login To Continue"
+		return render_template("login.html", form=login_form, search_form = search_form, message=message)
+	
 	username = current_user.username
 	return render_template("home.html", username = username, search_form = search_form)
 
 @app.route("/books/allbooks", methods=['GET', 'POST'])
 def allbooks():
 	search_form = SearchForm() 
+	login_form = LoginForm()
 
 	if not current_user.is_authenticated:
-		return "You must login to have access to this page"	
+		message = "Please Login To Continue"
+		return render_template("login.html", form=login_form, search_form = search_form, message=message)	
 
 	username = current_user.username
 	
@@ -141,6 +146,7 @@ def allbooks():
 @app.route("/books/<search>", methods=['GET', 'POST'])
 def searchedbooks(search):
 	search_form = SearchForm() 
+	login_form = LoginForm()
 
 	if flask.request.method == 'POST':
 		if search_form.validate_on_submit():
@@ -148,7 +154,8 @@ def searchedbooks(search):
 			print('I am inside of the loop X2')
 
 	if not current_user.is_authenticated:
-		return "You must login to have access to this page"	
+		message = "Please Login To Continue"
+		return render_template("login.html", form=login_form, search_form = search_form, message=message)
 
 	username = current_user.username
 
@@ -171,14 +178,32 @@ def searchedbooks(search):
 @app.route("/book/<title>", methods=['GET', 'POST'])
 def bookTitle(title):
 	search_form = SearchForm()
+	login_form = LoginForm()
 
 	books = Books.query.filter_by(title=title).first()
+
+	book_object = books.isbn
+	
+	#Parses the api rewuest to get rest of the data
+	res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "VZiRw90zkVi3Ipbnxg2xA", "isbns": "{}".format(book_object)})
+	data = res.json()
+	data2 = data['books'][0]
+	isbnB = data2['isbn']
+	review_count = data2['reviews_count']
+	avereage_score = data2['average_rating']
+
+
+
+
+
+	comments = Reviews.query.filter_by(book_id=books.isbn)
 	username = current_user.username
 	review_form = ReviewForm()
 	
 
 	if not current_user.is_authenticated:
-		return "You must login to have access to this page"
+		message = "Please Login To Continue"
+		return render_template("login.html", form=login_form, search_form = search_form, message=message)
 
 	if flask.request.method == 'POST':
 	
@@ -198,21 +223,24 @@ def bookTitle(title):
 			else:
 				return "You cannot comment on the same book twice"
 	else:
-		return render_template("books/bookresult.html", books=books, username = username, form = review_form, search_form = search_form)
+		return render_template("books/bookresult.html", review_count= review_count, avereage_score=avereage_score, books=books, comments=comments, username = username, form = review_form, search_form = search_form)
 
 @app.route("/logout", methods=['GET'])
 def logout():
 	search_form = SearchForm()
+	login_form = LoginForm()
 
 	logout_user()
 
-	return"Logged out using flask login "
+	message = "Logged out"
+	return render_template("login.html", form=login_form, search_form = search_form, message=message)
 
 
 if __name__== "__main__":
 	app.run(debug=True)
 
 
+#test in console
 #	print('-----------------------')
 #	print("Before anything ")
 #	print('-----------------------')	
