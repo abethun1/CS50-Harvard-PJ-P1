@@ -1,28 +1,8 @@
 venv/
 __pycache__/
 flask_session/
+.env
 
 
 
 
-#This is what i run to make the tables
-CREATE TABLE users (
-id SERIAL PRIMARY KEY,
-username VARCHAR(20) UNIQUE NOT NULL ,
-password TEXT NOT NULL);
-
-CREATE TABLE books (
-isbn TEXT UNIQUE NOT NULL PRIMARY KEY,
-title VARCHAR(80),
-author VARCHAR(80),
-year INT );
-
-CREATE TABLE reviews (
-id SERIAL UNIQUE NOT NULL PRIMARY KEY,
-comment TEXT,
-rating FLOAT,
-owner_id INTEGER,
-book_id TEXT,
- FOREIGN KEY(owner_id) REFERENCES users(id),
- FOREIGN KEY(book_id) REFERENCES books(isbn)
-);
